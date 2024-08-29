@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Item</title>
+</head>
+<body>
+    <h1>Add a New Item</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="type" value="{{ type.id }}">
+        <button type="submit">Add Item</button>
+    </form>
+</body>
+</html>
