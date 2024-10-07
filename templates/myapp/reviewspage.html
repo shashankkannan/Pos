@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Reviews</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url("{% static 'myapp/bg1.png' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            animation: bounceDown 0.8s ease-out;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .mic-button, .search-button {
+            padding: 15px 35px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: var(--primary-color); /* Maroon Color */
+            color: white;
+            border: none;
+            border-radius: 30px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.4);
+            font-weight: 600;
+        }
+
+        .mic-button:hover, .search-button:hover {
+            background-color: var(--secondary-color); /* Lighter maroon when hovered */
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.6);
+        }
+
+        .or-text {
+            margin: 20px 0;
+            font-size: 16px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--secondary-color); /* Maroon on focus */
+        }
+
+        /* Ensuring the container fits well on different screen sizes */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+        }
+        @keyframes bounceDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(20px) scale(1.05);
+    }
+    80% {
+        transform: translateY(-10px) scale(0.98);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+    </style>
+</head>
+<body onload="loadTheme1()">
+<div>{% include 'myapp/sidebar.html' with webc='4' %}</div>
+    <div class="container">
+        <h1 style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Tell Us Your Order Number</h1>
+        <button class="mic-button" onclick="startListening()">🎤 Click to Speak</button>
+
+        <div class="or-text">(OR)</div>
+
+        <input type="text" id="orderNumberInput" class="input-field" placeholder="Enter your 12-digit order number" maxlength="12">
+        <button class="search-button" onclick="searchOrder()">Search Order</button>
+    </div>
+
+    <script>
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            recognition.onresult = function(event) {
+                let transcript = event.results[0][0].transcript;
+                console.log(transcript);
+
+                processOrder(transcript);
+            };
+
+            recognition.start();
+        }
+
+        function searchOrder() {
+            const orderNumber = document.getElementById('orderNumberInput').value.trim();
+
+            // Validate if the input is exactly 12 digits
+            if (!/^\d{12}$/.test(orderNumber)) {
+                alert("Please enter a valid 12-digit order number.");
+                return;
+            }
+
+            processOrder(orderNumber);
+        }
+
+        function processOrder(input) {
+            fetch(`http://localhost:8000/process_order_number/?input=${encodeURIComponent(input)}`)
+                .then(response => {
+                    if (response.ok) {
+                        if (response.redirected) {
+                            window.location.href = response.url; // Navigate to the new URL
+                        } else {
+                            alert("No matching order found.");
+                        }
+                    } else {
+                        return response.text().then(text => {
+                            alert("Error: " + text); // Display error message from server
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while processing your request.");
+                });
+        }
+    </script>
+</body>
+</html>

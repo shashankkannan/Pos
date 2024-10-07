@@ -1,0 +1,264 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Ticket Dashboard</title>
+    <style>
+
+        @keyframes bounceDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.9);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(20px) scale(1.05);
+            }
+            80% {
+                transform: translateY(-10px) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* General Layout */
+        body {
+            overflow-y: hidden;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            color: #333; /* Default text color */
+        }
+
+        .container {
+            overflow-y: auto;
+            animation: bounceDown 0.8s ease-out;
+            max-width: 1200px; /* Wider container */
+            margin-left: 16%; /* Center container */
+            margin-top: 3%;
+            width: 70%;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color); /* Header color */
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .btn-assign {
+            background-color: #28a745; /* Green */
+        }
+
+        .btn-assign:hover {
+            background-color: #218838;
+        }
+
+        .btn-unassign {
+            background-color: #dc3545; /* Red */
+        }
+
+        .btn-unassign:hover {
+            background-color: #c82333;
+        }
+
+        .message {
+            color: #ff0000;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .ticket-id {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            text-align: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .dashboard-header h2 {
+            margin: 0;
+        }
+        td{
+             color: var(--primary-color);
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        th{
+            text-align: center;
+             color: white;
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body onload="loadTheme1()">
+<div class="sidebar-container">
+        {% include 'myapp/sidebar.html' %} <!-- Include sidebar -->
+    </div>
+
+
+
+<div class="container">
+<h1  style="color: var(--primary-color);
+    text-align: center;
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Tickets</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Order ID</th>
+            <th>Item</th>
+            <th>Created At</th>
+            <th>Assigned</th>
+            <th>Done</th>
+            <th>Review</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for ticket in tickets %}
+        <tr>
+            <td class="ticket-id">
+                <a href="{% url 'ticket_details' ticket.ticket_id %}">{{ ticket.ticket_id }}</a>
+            </td>
+            <td >{{ ticket.order.order_id }}</td>
+            <td>{{ ticket.item.name }}</td>
+            <td>{{ ticket.created_at }}</td>
+            <td class="status">{{ ticket.assigned|yesno:"Yes,No" }}</td>
+            <td class="status">{{ ticket.done|yesno:"Yes,No" }}</td>
+            <td>
+                {% for review in reviews %}
+                    {% if review.order == ticket.order %}
+                        {{ review.review_text }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% if ticket.assigned and not ticket.done%}
+                    <button class="btn btn-unassign" onclick="unassignTicket('{{ ticket.ticket_id }}')">Unassign</button>
+                {% elif ticket.done %}
+                    <button  style="background-color: grey; color: white;border: none; padding: 5px;" >Ticket Closed</button>
+                {% else %}
+                    <button class="btn btn-assign" onclick="assignTicket('{{ ticket.ticket_id }}')">Assign</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    function assignTicket(ticketId) {
+        fetch(`/assign_ticket/${ticketId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Ticket assigned to ${data.worker}`);
+                location.reload();  // Refresh the page to update the ticket status
+            } else {
+                document.getElementById("message").textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function unassignTicket(ticketId) {
+        fetch(`/unassign_ticket/${ticketId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();  // Refresh the page to update the ticket status
+            } else {
+                document.getElementById("message").textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

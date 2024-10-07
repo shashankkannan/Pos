@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Camera</title>
+    <style>
+        @keyframes bounceDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+            }
+            80% {
+                transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+            }
+            100% {
+                transform: translateY(0) scale(1); /* Settle in place */
+            }
+        }
+
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            color: #333; /* Default text color */
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color); /* Adding a nice color to the heading */
+        }
+
+        .container {
+            animation: bounceDown 0.8s ease-out;
+            max-width: 800px; /* Adjusted container width */
+            margin: 40px auto; /* Center container */
+            padding: 30px; /* More padding */
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1); /* 3D effect */
+            transition: transform 0.2s; /* Smooth transition */
+        }
+
+        video {
+            width: 100%; /* Make video responsive */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        }
+
+        #recognitionStatus {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            color: #dc3545; /* Red color for status */
+        }
+    </style>
+</head>
+<body onload="loadTheme1()">
+    <div class="container">
+        <h2>Face Recognition</h2>
+
+        <!-- Display video stream from the camera -->
+        <video id="video" autoplay></video>
+
+        <!-- Hidden canvas to capture the image from the video stream -->
+        <canvas id="canvas" style="display:none;"></canvas>
+
+        <!-- Recognition status -->
+        <p id="recognitionStatus"></p>
+    </div>
+
+    <script>
+        const workerName = "{{ worker_name|escapejs }}";  // Escapes the value for safe JavaScript usage
+        console.log(workerName);
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const recognitionStatus = document.getElementById('recognitionStatus');
+        const context = canvas.getContext('2d');
+        let captureInterval;
+        let timeout;
+
+        // Access the device's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                startCapturing();
+            })
+            .catch(err => {
+                console.error("Error accessing the camera: ", err);
+            });
+
+        function startCapturing() {
+            // Set a timeout for 10 seconds
+            timeout = setTimeout(() => {
+                clearInterval(captureInterval);
+                recognitionStatus.textContent = "Sorry, you are not our employee.";
+                timeout = setTimeout(()=>{
+                    window.location = {% url 'worker_login' %}
+                }, 2000);
+            }, 15000); // 30 seconds
+
+            // Capture image every 2 seconds
+            captureInterval = setInterval(() => {
+                captureImage();
+            }, 6000); // 4 seconds
+        }
+
+        function captureImage() {
+            console.log("Capturing now")
+            // Set canvas dimensions to match the video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw the current frame from the video onto the canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas image to a Blob
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, 'captured_image.jpg');
+
+                // Send the image to the Django backend
+                fetch('/camera/save_image/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()  // Include CSRF token for Django security
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        console.log(data.status)
+
+                        clearInterval(captureInterval); // Stop capturing if a match is found
+                        clearTimeout(timeout);
+                        if (workerName.trim() === data.status.toString().trim()){
+                            nm = data.status.toString().trim()
+                            recognitionStatus.textContent= `Welcome ${nm}.`;
+                            window.location = "{% url 'worker_tickets' %}"
+                        }
+
+
+
+                    }
+                })
+                .catch(err => {
+                    console.error("Error during recognition: ", err);
+                    recognitionStatus.textContent = "Error during recognition.";
+                });
+            }, 'image/jpeg');  // The format can be changed (e.g., to 'image/png')
+        }
+
+        // Utility function to get the CSRF token for Django
+        function getCSRFToken() {
+            return document.cookie.split(';').find(item => item.trim().startsWith('csrftoken=')).split('=')[1];
+        }
+    </script>
+</body>
+</html>

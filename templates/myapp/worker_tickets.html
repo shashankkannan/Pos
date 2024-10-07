@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Tickets</title>
+    <style>
+        /* Add styles for the header */
+
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .header a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Existing Styles from your page */
+
+        @keyframes bounceDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.9);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(20px) scale(1.05);
+            }
+            80% {
+                transform: translateY(-10px) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* General Layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'myapp/bg1.png' %}");
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .ticket-container {
+            width: 70%;
+
+            margin: 40px auto;
+            padding: 30px;
+            border: var(--secondary-color);
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            border-width: 2px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 0, 0, 0.1);
+            animation: bounceDown 0.8s ease-out;
+        }
+        .ticket{
+            border: var(--secondary-color);
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            border-width: 2px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.29), 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-family: 'Georgia', serif;
+            font-size: 36px;
+            text-shadow: 0 0 10px rgba(180, 180, 180, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-review {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.1s ease-in, transform 0.2s ease-in;
+            margin-top: 10px;
+            display: inline-block;
+        }
+         .btn-review:hover{
+             scale: 1.1;
+             background-color: var(--secondary-color);
+         }
+        .header {
+    display: flex;
+    justify-content: space-between; /* Distributes items evenly */
+    align-items: center; /* Vertically centers items */
+    padding: 10px;
+    position: relative;
+    width: 100%;
+}
+
+.worker-name {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Centers the text horizontally */
+    font-size: 20px;
+    font-weight: bold;
+}
+.right-links {
+    margin-left: auto;
+}
+
+.right-links a {
+    margin-left: 10px;
+    text-decoration: none;
+    font-size: 16px;
+}
+p{
+    color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+        /* Additional styles from your page */
+        /* ... */
+    </style>
+</head>
+<body onload="loadTheme1()">
+<div class="sidebar-container">
+        {% include 'myapp/sidebar.html' with wrk="1" %} <!-- Pass the value to sidebar -->
+    </div>
+
+
+   <div class="header">
+    <!-- Centered worker name -->
+    <div class="worker-name">
+        <span></span>
+{#        <h3 class="fade-in" style="font-size: 22px; color: white; font-family: 'Georgia', serif; font-weight: bold; text-shadow: 0 0 10px rgba(180, 180, 180, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);"><span id="total">Welcome, {{ worker.name }}</span></h3>#}
+    </div>
+
+    <!-- Right-side: Profile and Logout buttons -->
+    <div class="right-links">
+         <h3 class="fade-in" style="padding-right:5vw; font-size: 20px; color: white; font-family: 'Georgia', serif; font-weight: bold; text-shadow: 0 0 10px rgba(180, 180, 180, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);"><span id="total">Welcome, {{ worker.name }}</span></h3>
+
+    </div>
+</div>
+
+
+    <div class="ticket-container">
+        <h2>Your Tickets</h2>
+        <div class="ticket-list">
+            {% for ticket in tickets %}
+                <div class="ticket">
+                    <p class="ticket-id">Ticket ID: {{ ticket.ticket_id }}</p>
+                    <p>Order ID: {{ ticket.order.order_id }}</p>
+                    <p>Item: {{ ticket.item.name }}</p>
+                    <p>Created At: {{ ticket.created_at }}</p>
+                    <p class="status {% if not ticket.done %}pending{% endif %}">
+                        Status: {% if ticket.done %}Done{% else %}Pending{% endif %}
+                    </p>
+                    {% if not ticket.done %}
+                        <div class="review-btn">
+                            <a href="{% url 'ticket_details' ticket.ticket_id %}?wrk={{ ticket.ticket_id }}" class="btn-review">Review</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>No tickets assigned.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

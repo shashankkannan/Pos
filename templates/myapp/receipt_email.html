@@ -1,0 +1,19 @@
+<!-- receipt_email.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Receipt</title>
+</head>
+<body onload="loadTheme1()">
+    <h2>Your Receipt (ID: {{ receipt_id }})</h2>
+    <h3>Order Details:</h3>
+    <ul>
+        {% for order in order_details %}
+            <li>{{ order.item_name }} - Price: {{ order.price }} - Quantity: {{ order.quantity }} - Total: {{ order.total }}</li>
+        {% endfor %}
+    </ul>
+    <p>Thank you for your purchase!</p>
+</body>
+</html>

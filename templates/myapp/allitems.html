@@ -77,27 +77,25 @@
         .header a:hover {
             background-color: var(--secondary-color);
         }
+        .search-container {
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+        }
 
         .items-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            padding: 10px;
-            scroll-snap-type: x mandatory;
-        }
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 items per row */
+    gap: 20px; /* Space between the items */
+    padding: 10px;
+}
 
-        .item-box {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Slightly enhanced shadow */
-            padding: 15px;
-            width: 220px; /* Increased item box width */
-            text-align: center;
-            position: relative;
-            scroll-snap-align: start;
-            transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
-        }
+.item-box {
+    border: 1px solid var(--primary-color); /* Optional: add a border around the items */
+    padding: 10px;
+    text-align: center; /* Center the content within each box */
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1); /* Optional: add a slight shadow to items */
+}
 
         .item-box:hover {
             transform: translateY(-5px); /* Lift effect on hover */
@@ -170,24 +168,18 @@
             background-color: #5a6268; /* Darker gray on hover */
             transform: translateY(-2px); /* Slight lift on hover */
         }
-        .search-container {
-            width: 100%;
-            margin: 0 auto;
-            text-align: center;
-        }
     </style>
     <script>
         function confirmDeletion(itemId, itemName) {
             const message = `Are you sure you want to delete the item "${itemName}"? This action cannot be undone.`;
-            
+
             if (confirm(message)) {
                 // If confirmed, submit the form to delete the item
                 document.getElementById('delete-form').elements['item_id'].value = itemId;
                 document.getElementById('delete-form').submit();
             }
         }
-
-         function filterItems() {
+        function filterItems() {
         const searchInput = document.getElementById('search-input').value.toLowerCase();
         const items = document.querySelectorAll('.item-box'); // Select all item boxes
 
@@ -209,11 +201,8 @@
     </div>
     <div class="container">
         <div class="header">
-            <h1 style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">{{ type.name }} Items</h1>
-
-            <a style="color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" href="{% url 'add_item' type.id %}">Add New Item</a>
+            <h1 style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">All Items</h1>
         </div>
-
     <div class="search-container">
     <input type="text" id="search-input" onkeyup="filterItems()" placeholder="Search for items..." style="width: 100%; padding: 10px; font-size: 16px; border: 2px solid var(--primary-color); border-radius: 5px; margin-bottom: 20px;">
 </div>

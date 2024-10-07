@@ -1,0 +1,136 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/colors.css' %}">
+<script src="{% static 'js/theme.js' %}" defer></script>
+<body onload="loadTheme1()">
+{% block content %}
+    <div class="sidebar-container">
+        {% include 'myapp/sidebar.html' %} <!-- Include sidebar -->
+    </div>
+<div class="container">
+    <h1  style="color: var(--primary-color);
+    text-align: center;
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Orders</h1>
+    <div class="order-list">
+        {% if orders %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Customer Email</th>
+                        <th>Created At</th>
+                        <th>Order reviewed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr class="order-row">
+                        <td><a href="{% url 'item_review_order' order.order_id %}?xd={{ order.id }}  ">{{ order.order_id }}</a></td>
+                        <td>{{ order.item.name }}</td>
+                        <td>{{ order.quantity }}</td>
+
+                        <td>
+                            {% if order.customer %}
+                                {{ order.customer.email }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>{{ order.created_at|date:"Y-m-d H:i:s" }}</td>
+                        <td>
+                {% if order.reviewed %}
+                    ✔️ <!-- Tick -->
+                {% else %}
+                    ❌ <!-- Cross -->
+                {% endif %}
+            </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No orders available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+</body>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+        background-size: cover;
+        background-position: center;
+        color: #333; /* Default text color */
+    }
+
+    .container {
+        overflow-y: auto;
+            height: 80vh;
+            animation: bounceDown 0.8s ease-out;
+            max-width: 1200px; /* Wider container */
+            margin-left: 16%; /* Center container */
+            margin-top: 3%; /* Center container */
+        padding: 30px; /* Padding */
+        background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+        border-radius: 12px; /* Rounded corners */
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* 3D effect */
+    }
+
+    @keyframes bounceDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+        }
+        60% {
+            opacity: 1;
+            transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+        }
+        80% {
+            transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+        }
+        100% {
+            transform: translateY(0) scale(1); /* Settle in place */
+        }
+    }
+
+    .order-list {
+        margin-top: 20px; /* Add space above the order list */
+        background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background for 3D effect */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+        padding: 20px; /* Padding around the content */
+    }
+
+    .table {
+        width: 100%; /* Full width */
+        border-collapse: collapse; /* Collapse borders */
+    }
+
+    .table th, .table td {
+        padding: 15px; /* Padding for table cells */
+        text-align: center; /* Left-align text */
+        border-bottom: 1px solid #ddd; /* Bottom border */
+         color: var(--primary-color);
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .table th {
+        text-align: center;
+        background-color: var(--primary-color); /* Header background color */
+        color: white; /* Header text color */
+    }
+
+    .order-row:hover {
+        background-color: var(--secondary-color); /* Light blue background on hover */
+        transition: background-color 0.3s; /* Smooth transition */
+    }
+</style>

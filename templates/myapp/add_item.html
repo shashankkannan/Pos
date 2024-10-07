@@ -1,15 +1,209 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+     <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Item</title>
+    <style>
+        p, h1, h2{
+            color: var(--primary-color);
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        button{
+            background-color: var(--primary-color);
+            transition: background-color ease-in 0.3s, transform ease-in 0.2s;
+        }
+        button:hover{
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+        /* General styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            color: #333; /* Default text color */
+        }
+
+
+@keyframes bounceDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+    }
+    80% {
+        transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+    }
+    100% {
+        transform: translateY(0) scale(1); /* Settle in place */
+    }
+}
+        .container {
+            animation: bounceDown 0.8s ease-out;
+            max-width: 600px; /* Width of the form container */
+            margin: 40px auto; /* Centered on the page */
+            padding: 30px; /* Padding around the container */
+            background-color: #fff; /* White background for the form */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* 3D shadow effect */
+            transition: transform 0.3s, box-shadow 0.3s; /* Smooth transitions */
+        }
+
+        .container:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+        }
+
+        form {
+            display: flex; /* Flexbox for layout */
+            flex-direction: column; /* Arrange elements vertically */
+            gap: 20px; /* Space between form elements */
+        }
+
+        button {
+            /* Primary button color */
+            color: white; /* Button text color */
+            padding: 12px; /* Button padding */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded button corners */
+            font-size: 1.2em; /* Larger button text */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, transform 0.2s; /* Transition effects */
+        }
+
+        button:hover {
+             /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+        /* Styling for the feature list */
+        #featureList {
+            list-style-type: none; /* No bullets */
+            padding: 0; /* Remove default padding */
+        }
+
+        #featureList li {
+            display: flex; /* Flexbox for horizontal layout */
+            justify-content: space-between; /* Space between text and button */
+            padding: 10px; /* Padding for list items */
+            background-color: #e9ecef; /* Light gray background for list items */
+            border-radius: 5px; /* Rounded corners */
+            margin-bottom: 10px; /* Spacing between items */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        /* Remove button styling */
+        #featureList button {
+            background-color: #dc3545; /* Red color for remove button */
+            color: white; /* Button text color */
+            border: none; /* No border */
+            border-radius: 3px; /* Rounded corners */
+            padding: 5px 10px; /* Padding for button */
+            cursor: pointer; /* Pointer cursor */
+            transition: background-color 0.3s; /* Transition for hover effect */
+        }
+
+        #featureList button:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+
+        /* Hidden input field */
+        input[type="hidden"] {
+            display: none; /* Hide the input field */
+        }
+         .back-button {
+            display: inline-block; /* Inline block for button */
+            margin: 20px; /* Margin around the button */
+            padding: 10px 20px; /* Padding for the button */
+            font-size: 1.2em; /* Button text size */
+            background-color: #6c757d; /* Gray color */
+            color: white; /* Button text color */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor */
+            text-decoration: none; /* No underline */
+            transition: background-color 0.3s, transform 0.2s; /* Transition effects */
+        }
+
+        .back-button:hover {
+            background-color: #5a6268; /* Darker gray on hover */
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+    </style>
+    <script>
+        function addFeature() {
+            // Prompt the user to enter a new feature
+            const feature = prompt("Enter a new feature:");
+            if (feature) {
+                // Create a new list item for the feature
+                const featureList = document.getElementById("featureList");
+                const newFeature = document.createElement("li");
+                newFeature.textContent = feature;
+
+                // Create a remove button for each feature
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.type = "button";  // Prevent form submission
+                removeButton.onclick = function() {
+                    featureList.removeChild(newFeature);
+                    updateFeatureInput();
+                };
+
+                newFeature.appendChild(removeButton);
+                featureList.appendChild(newFeature);
+
+                // Update the hidden input field with the new feature list
+                updateFeatureInput();
+            }
+        }
+
+        function updateFeatureInput() {
+            // Get all features and update the hidden input field
+            const features = [];
+            const featureItems = document.getElementById("featureList").children;
+            for (let i = 0; i < featureItems.length; i++) {
+                features.push(featureItems[i].textContent.replace("Remove", "").trim());
+            }
+            // Ensure to join only non-empty features
+            document.getElementById("id_features").value = features.filter(Boolean).join(","); // Filter out empty values
+        }
+    </script>
 </head>
-<body>
-    <h1>Add a New Item</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="hidden" name="type" value="{{ type.id }}">
-        <button type="submit">Add Item</button>
-    </form>
+<<body onload="loadTheme1()">>
+<div class="sidebar-container">
+        {% include 'myapp/sidebar.html' with show_view_items=type.name typeid=type.id %} <!-- Pass the value to sidebar -->
+    </div>
+    <div class="container">
+        <h1>Add a New Item</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="type" value="{{ type.id }}">
+
+            <div>
+                <h3>Features</h3>
+                <ul id="featureList">
+                    <!-- Features will be added here dynamically -->
+                </ul>
+                <button type="button" onclick="addFeature()">Add Feature</button>
+                <input type="hidden" id="id_features" name="features" value="">
+            </div>
+
+            <button type="submit">Add Item</button>
+        </form>
+    </div>
 </body>
 </html>

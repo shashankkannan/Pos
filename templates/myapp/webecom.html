@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Website</title>
+    <style>
+        /* Keyframes for animations */
+        @keyframes bounceDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.9);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(20px) scale(1.05);
+            }
+            80% {
+                transform: translateY(-10px) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* General styles */
+        body {
+            overflow-y: hidden;
+            overflow-x: hidden;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+
+        .container {
+            overflow-y: auto;
+            margin-top: 3vh;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            padding: 20px;
+            width: 70%;
+            margin-left: 15vw;
+            animation: bounceDown 0.8s ease-out; /* Added animation */
+            max-width: 1000px; /* Limit max width */
+            max-height: 85vh; /* Set a maximum height for the container */
+            border: 1px solid #ccc; /* Optional: Add a border for clarity */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05); /* 3D hover effect */
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0; /* Rounded corners at the top */
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 0 10px;
+        }
+
+        .card-price {
+            font-size: 16px;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            transition: background-color 0.3s; /* Smooth background color change */
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: var(--secondary-color); /* Darker green on hover */
+        }
+
+        .cart-container {
+            position: fixed;
+            right:0;
+            height: 100vh;
+            top: 0;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            animation: bounceDown 0.8s ease-out; /* Added animation */
+        }
+
+        .cart-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .cart-items {
+            height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .remove-item-btn {
+            color: red;
+            cursor: pointer;
+        }
+
+        .checkout-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: background-color 0.3s; /* Smooth background color change */
+        }
+
+        .checkout-button:hover {
+            background-color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .home-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* Text color */
+    background-color: #ffffff; /* Primary color */
+    padding: 10px 15px; /* Padding for button */
+    border-radius: 5px 0 0 5px; /* Rounded left corners */
+    border: none; /* Remove border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 3D shadow effect */
+    font-size: 20px; /* Increase font size */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+.home-button:hover {
+    background-color: #b2b5bb; /* Darker blue on hover */
+    transform: translateY(-2px); /* Lift effect on hover */
+}
+
+
+    </style>
+</head>
+<body onload="loadTheme1()">
+<div>{% include 'myapp/sidebar.html' with webc='2' %}</div>
+
+
+    <!-- Search Bar -->
+
+    <!-- Main Container for Items -->
+    <div class="container" id="item-container">
+        {% for item in items %}
+        <div class="card">
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">
+            <div class="card-content">
+                <div class="card-title" style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">{{ item.name }}</div>
+                <div class="card-price" style=" color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">${{ item.price }}</div>
+                <div style=" display: flex;
+    flex-direction: column; ">
+                    {% if item.stock == 0 %}
+                <p style=" text-align:center; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Out of stock</p>
+                        {% else %}
+                        <button class="add-to-cart-btn" onclick="addToCart({{ item.id }})">Add to Cart</button>
+                    {% endif %}
+                <a style=" text-align: center; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);"href="{% url 'item_info' item.id 2 %}">View Item</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Cart Section -->
+    <div class="cart-container" id="cart-container">
+        <div class="cart-header" style="font-size: 28px; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Cart</div>
+        <div class="cart-items" id="cart-items">
+            {% if cart|length == 0 %}
+        <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Empty Cart</p>
+    {% endif %}
+            <!-- Dynamically added cart items -->
+        </div>
+        <a class="checkout-button" style="position: fixed;
+            bottom: 20px;
+            right: 20px;" onclick="checkou()">Checkout</a>
+    </div>
+
+    <script>
+        function checkou(){
+            if(cart.length ===0){
+                alert("Your cart is empty")
+            } else {
+                window.location.href = {% url 'checkout' %}
+            }
+
+
+        }
+        let cart = [];
+
+        // Add item to cart
+        function addToCart(itemId) {
+            fetch(`/add_to_cart/${itemId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    cart = data.cart;
+                    updateCartView();
+                });
+        }
+
+        // Remove item from cart
+        function removeFromCart(itemId) {
+            fetch(`/remove_from_cart/${itemId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    cart = data.cart;
+                    updateCartView();
+                });
+        }
+
+
+        // Update cart view
+        function updateCartView() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+
+            cart.forEach(item => {
+                console.log(item.name)
+                const cartItem = `
+                    <div class="cart-item">
+                        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">${item.name} x${item.quantity}</span>
+                        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">$${item.price}</span>
+                        <span class="remove-item-btn" onclick="removeFromCart(${item.id})">&times;</span>
+                    </div>`;
+                cartItemsContainer.innerHTML += cartItem;
+            });
+        }
+         window.onload = function() {
+            // Assign the cart variable from the Django context
+            cart = {{ cart|safe }}; // Use the safe filter to avoid escaping
+            updateCartView(); // This will execute the function to populate the cart
+        };
+
+        // Function to search items
+        function searchItems(query) {
+            const itemContainer = document.getElementById('item-container');
+            Array.from(itemContainer.children).forEach(card => {
+                const title = card.querySelector('.card-title').innerText.toLowerCase();
+                if (title.includes(query.toLowerCase())) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

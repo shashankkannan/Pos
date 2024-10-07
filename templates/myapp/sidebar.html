@@ -1,0 +1,122 @@
+<!-- sidebar.html -->
+<div class="sidebar">
+    <h3>Menu</h3>
+    <ul>
+    {% if webc == '2'%}
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+    <input style=" color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" type="text" class="search-bar" placeholder="Search for items..." oninput="searchItems(this.value)">
+</div>
+
+    {% endif %}
+    {% if webc == '1' or webc == '3' or webc == '4'    %}
+    <li><a href="{% url 'webecom' %}">Shop</a></li>
+
+    {% endif %}
+{% if l or webc%}
+    <li><a href="{% url 'home' %}">Home</a></li>
+    {% endif %}
+{% if webc == '3' or webc == '1' or webc == '2' %}
+     <li><a href="{% url 'reviewspage' %}">Give Review</a></li>
+    {% endif %}
+
+    {% if not wrk and not l and not webc %}
+        <li><a href="{% url 'home' %}" >Home</a></li>
+        <li><a href="{% url 'all_tickets' %}">View Tickets</a></li>
+
+        <li><a href="{% url 'all_orders' %}">View Orders</a></li>
+        <li><a href="{% url 'admin_portal' %}">View Types</a></li>
+        <li><a href="{% url 'allitems' %}">View Items</a></li>
+        <li><a href="{% url 'scan_portal' %}">Scan Portal</a></li>
+        <p style="text-underline-offset: 4px;text-decoration: underline; text-underline: var(--primary-color);">Excel operations</p>
+        <li><a href="{% url 'upload_types' %}">Add Types</a></li>
+        <li><a href="{% url 'upload_items' %}">Add Items</a></li>
+        <li><a href="{% url 'upload_excel' %}">Add Orders/Receipts</a></li>
+
+        <p style="text-underline-offset: 4px;text-decoration: underline; text-underline: var(--primary-color);">Money Makers</p>
+        <li><a href="{% url 'worker_data' %}">Workers</a></li>
+        <li><a href="{% url 'customer_data' %}">Customers</a></li>
+    {% endif %}
+    {% if wrk %}
+        <li><a href="{% url 'worker_tickets' %}">Tickets</a></li>
+        <li> <a href="{% url 'worker_profile' %}">Profile</a></li>
+        <li><a href="{% url 'worker_logout' %}">Logout</a></li>
+    {% endif %}
+
+        {% if show_view_items %}
+        <li><a href="{% url 'type_items' typeid %}">{{ show_view_items }}</a></li>  <!-- Conditional row -->
+        {% endif %}
+        {% if itmid %}
+    <li><a href="{% url 'item_info' itmid 1%}">Back to {{ itnm }}</a></li>
+    {% endif %}
+
+    </ul>
+</div>
+
+<style>
+
+    .search-bar {
+    border-radius: 0 5px 5px 0; /* Rounded right corners */
+    border-color: var(--primary-color);
+    padding: 15px; /* Padding for the search bar */
+    font-size: 12px; /* Font size */
+    flex-grow: 1; /* Allow the search bar to grow */
+    outline: none; /* Remove outline */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for search bar */
+     max-width: 300px; /* Set a maximum width for the search bar */
+    width: 100%;
+    max-height: 10px;
+    height: 100%;
+}
+    /* Styles for the sidebar */
+    .sidebar {
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+        padding: 20px; /* Padding around the content */
+        border-left: 1px solid #ddd; /* Left border */
+        width: 160px; /* Fixed width */
+        position: fixed; /* Fixed position */
+        top: -2px; /* Distance from the top */
+        left: -2px; /* Distance from the right */
+        height: max-content; /* Full height minus top padding */
+        overflow-y: auto; /* Scroll if content overflows */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        border-radius: 8px; /* Rounded corners */
+    }
+
+    .sidebar h3 {
+         color: var(--primary-color);
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        margin-top: 0; /* Remove top margin */
+        font-size: 1.5em; /* Larger font size */
+    }
+
+    .sidebar ul {
+        list-style: none; /* Remove bullet points */
+        padding: 0; /* Remove padding */
+    }
+
+    .sidebar li {
+        margin: 10px 0; /* Space between items */
+    }
+
+    .sidebar a {
+         color: var(--primary-color);
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        text-decoration: none; /* Remove underline */
+         /* Link color */
+         /* Bold text for links */
+        display: block; /* Make the entire area clickable */
+        padding: 10px; /* Padding around links */
+        border-radius: 4px; /* Rounded corners */
+        transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+    }
+
+    .sidebar a:hover {
+         background-color: var(--secondary-color); /* Light blue background on hover */
+        text-decoration: underline; /* Underline on hover */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Shadow effect on hover for depth */
+    }
+</style>

@@ -1,29 +1,63 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+     <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Portal</title>
     <style>
+        @keyframes bounceDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+    }
+    80% {
+        transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+    }
+    100% {
+        transform: translateY(0) scale(1); /* Settle in place */
+    }
+}
         /* General styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
+            background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            color: #333; /* Default text color */
+            overflow-y: hidden;
         }
-        
+
         h1 {
             text-align: center;
-            color: #333;
             margin: 20px 0;
         }
 
         .container {
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+            overflow-y: auto;
+            height: 80vh;
+            animation: bounceDown 0.8s ease-out;
+            max-width: 1200px; /* Wider container */
+            margin-left: 16%; /* Center container */
+            margin-top: 3%;
+            padding: 30px; /* More padding */
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1); /* 3D effect */
+            transition: transform 0.2s; /* Smooth transition */
+        }
+
+        .container:hover {
+            transform: scale(1.02); /* Slightly enlarges on hover for effect */
         }
 
         .header {
@@ -35,11 +69,10 @@
 
         .header h2 {
             margin: 0;
-            color: #333;
         }
 
         .header a {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             padding: 10px 20px;
             text-decoration: none;
@@ -48,14 +81,17 @@
         }
 
         .header a:hover {
-            background-color: #0056b3;
+            background-color: var(--secondary-color);
         }
 
         .items-list {
             display: flex;
+            flex-direction: row;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
+            padding: 0;
+            list-style: none;
         }
 
         .item-box {
@@ -64,9 +100,15 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 15px;
-            width: 200px;
+            width: 200px; /* Wider item boxes */
             text-align: center;
             position: relative;
+            transition: transform 0.2s, box-shadow 0.2s; /* Smooth transition */
+        }
+
+        .item-box:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
         }
 
         .item-box img {
@@ -80,9 +122,9 @@
         }
 
         .delete-btn {
-            color: #dc3545;
+            color: var(--primary-color);
             background-color: #fff;
-            border: 1px solid #dc3545;
+            border: 1px solid var(--primary-color);
             border-radius: 4px;
             cursor: pointer;
             padding: 5px 10px;
@@ -94,11 +136,31 @@
         }
 
         .delete-btn:hover {
-            background-color: #dc3545;
+            background-color: var(--secondary-color);
             color: #fff;
         }
+        .type-image {
+    width: 100px; /* Set the width of the images */
+    height: 100px; /* Set the height of the images */
+    object-fit: cover; /* Ensures images are cropped to fit the box without distortion */
+    border-radius: 8px; /* Adds rounded corners for a professional look */
+    margin-bottom: 10px; /* Adds spacing below the image */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow for a 3D effect */
+    display: block; /* Ensures the image is treated as a block element */
+    margin-left: auto; /* Centers the image horizontally */
+    margin-right: auto; /* Centers the image horizontally */
+    transition: transform 0.2s; /* Smooth transition effect for hover */
+}
+
+/* Hover effect for images */
+.type-image:hover {
+    transform: scale(1.05); /* Slight zoom-in effect on hover */
+}
     </style>
     <script>
+        {#window.onload = function (){#}
+        {#    loadTheme1();#}
+
         function confirmDeletion(typeId, typeName, items) {
             const itemList = items.join(', ');
             const message = `Are you sure you want to delete the type "${typeName}" and its related items "${itemList}"? This action cannot be undone.`;
@@ -111,16 +173,24 @@
         }
     </script>
 </head>
-<body>
+<body onload="loadTheme1()">
+
+ <div class="sidebar-container">
+        {% include 'myapp/sidebar.html' %} <!-- Include sidebar -->
+    </div>
     <div class="container">
         <div class="header">
-            <h2>Types</h2>
-            <a href="{% url 'add_type' %}">Add New Type</a>
+             <h1 style="font-size: 28px; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+                 Types</h1>
+            <a style="color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" href="{% url 'add_type' %}">Add New Type</a>
         </div>
         <div class="items-list">
             {% for entry in types_with_items %}
                 <div class="item-box">
-                    <a href="{% url 'type_items' entry.type.id %}">{{ entry.type.name }}</a>
+                {% if entry.type.image %}
+                <img src="{{ entry.type.image.url }} " alt="{{ entry.type.name }}" class="type-image" loading="lazy">
+            {% endif %}
+                 <a style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" href="{% url 'type_items' entry.type.id %}">{{ entry.type.name }} </a>
                     <span class="delete-btn" onclick="confirmDeletion({{ entry.type.id }}, '{{ entry.type.name }}', {{ entry.items|safe }})">
                         &times;
                     </span>

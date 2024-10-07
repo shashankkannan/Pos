@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details - {{ ticket.ticket_id }}</title>
+    <style>
+        body {
+            overflow-y: hidden;
+            font-family: 'Arial', sans-serif;
+            background-image: url("{% static 'myapp/bg1.png' %}"); /* Background image */
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+            color: #333; /* Default text color */
+        }
+
+        .container {
+            overflow-y: auto;
+            height: 80vh;
+            animation: bounceDown 0.8s ease-out;
+            max-width: 1200px; /* Wider container */
+            margin-left: 16%; /* Center container */
+            margin-top: 3%;
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+            padding: 20px;
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1); /* 3D effect */
+             /* Add animation */
+        }
+
+        @keyframes bounceDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+            }
+            80% {
+                transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+            }
+            100% {
+                transform: translateY(0) scale(1); /* Settle in place */
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color); /* Changed to a more vibrant color */
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 3D effect on table */
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 25px; /* Increased padding for better readability */
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .details {
+            margin-top: 20px;
+        }
+
+        .details h3 {
+            color: #333;
+            margin-top: 10px; /* Added spacing above headings */
+        }
+
+        .details p {
+            margin: 5px 0;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .assigned-worker {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .not-assigned {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Optional: Hover effect for table rows */
+        tr:hover {
+            background-color: #f1f1f1; /* Light grey background on hover */
+        }
+        .closed-ticket {
+            font-weight: bold;
+            color: #dc3545; /* Red color for closed ticket */
+            text-align: center; /* Center text for closed ticket */
+            margin-top: 20px; /* Spacing above text */
+        }
+        th{
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        td, p{
+        color: var(--primary-color);
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .heads{
+            color:var(--primary-color);
+            background-color: rgba(128,0,0,0.15);
+            text-align: center;
+
+        }
+        .button{
+
+            padding: 10px 10px;
+            display: block;
+            cursor: pointer;
+            margin: 10px auto;
+            border-radius: 20px;
+            transition: background-color ease-in 0.2s, transform ease-in 0.2s;
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+            border-color: var(--primary-color) ;
+        }
+        .button:hover{
+            transform: scale(1.1);
+            background-color: var(--secondary-color);;
+        }
+
+
+    </style>
+</head>
+<body onload="loadTheme1()">
+<div class="sidebar-container">
+    {% if not wrk %}
+        {% include 'myapp/sidebar.html' %} <!-- Include sidebar -->
+    {% elif wrk %}
+        {% include 'myapp/sidebar.html' with wrk="1" %}
+    {% endif %}
+
+    </div>
+<div class="container">
+    <h1>Ticket Details: {{ ticket.ticket_id }}</h1>
+
+    <table class="table-details">
+    <!-- Order Details -->
+    <tr>
+        <th class="heads" colspan="2">Order Details</th>
+    </tr>
+    <tr>
+        <th>Order ID</th>
+        <td>{{ order.order_id }}</td>
+    </tr>
+    <tr>
+        <th>Item</th>
+        <td>{{ order.item.name }}</td>
+    </tr>
+    <tr>
+        <th>Quantity</th>
+        <td>{{ order.quantity }}</td>
+    </tr>
+
+    <!-- Ticket Details -->
+    <tr>
+        <th class="heads" colspan="2">Ticket Details</th>
+    </tr>
+    <tr>
+        <th>Ticket Created At</th>
+        <td>{{ ticket.created_at }}</td>
+    </tr>
+    <tr>
+        <th>Ticket Assigned</th>
+        <td class="status">{{ ticket.assigned|yesno:"Yes,No" }}</td>
+    </tr>
+    <tr>
+        <th>Ticket Done</th>
+        <td class="status">{{ ticket.done|yesno:"Yes,No" }}</td>
+    </tr>
+
+    <!-- Review Details -->
+    <tr>
+        <th class="heads" colspan="2">Review Details</th>
+    </tr>
+    {% if review %}
+    <tr>
+        <th>Review Text</th>
+        <td>{{ review.review_text }}</td>
+    </tr>
+    <tr>
+        <th>Admin Reply</th>
+        <td>{{ review.reply_text }}</td>
+    </tr>
+    <tr>
+        <th>Review Created At</th>
+        <td>{{ review.created_at }}</td>
+    </tr>
+    <tr>
+        <th>Review Comments</th>
+        <td>{{ review.review_comments }}</td>
+    </tr>
+    <tr>
+        <th>Rating</th>
+        <td>{{ review.stars }} / 5</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td class="heads" colspan="2">No review available for this order.</td>
+    </tr>
+    {% endif %}
+
+    <!-- Receipt Details -->
+    <tr>
+        <th class="heads" colspan="2">Receipt Details</th>
+    </tr>
+    {% if receipt %}
+    <tr>
+        <th>Receipt ID</th>
+        <td>{{ receipt.receipt_id }}</td>
+    </tr>
+    <tr>
+        <th>Total Tax</th>
+        <td>${{ receipt.total_tax }}</td>
+    </tr>
+    <tr>
+        <th>Total Bill</th>
+        <td>${{ receipt.total_bill }}</td>
+    </tr>
+    <tr>
+        <th>Receipt Created At</th>
+        <td>{{ receipt.created_at }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="2">No receipt available for this order.</td>
+    </tr>
+    {% endif %}
+
+    <!-- Assigned Worker Details -->
+    <tr>
+        <th class="heads" colspan="2" style="color:var(--primary-color);var(--primary-color); background-color: rgba(128,0,0,0.15);">Assigned Worker</th>
+    </tr>
+    {% if assigned_worker %}
+    <tr>
+        <th>Worker Name</th>
+        <td>{{ assigned_worker.name }}</td>
+    </tr>
+    <tr>
+        <th>Worker ID</th>
+        <td>{{ assigned_worker.worker_id }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="2">This ticket is not assigned to any worker yet.</td>
+    </tr>
+    {% endif %}
+</table>
+
+
+<div class="button-container">
+        {% if not ticket.done and assigned_worker %}
+            <form method="POST" action="{% url 'close_ticket' ticket.ticket_id %}">
+                {% csrf_token %}
+
+                <button class="button" type="submit">Review and Close Ticket</button>
+            </form>
+        {% elif not ticket.done and not assigned_worker%}
+
+
+            <p class="closed-ticket">Ticket is not assigned yet.</p>
+        {% endif %}
+</div>
+</div>
+
+</body>
+</html>

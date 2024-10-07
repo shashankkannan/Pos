@@ -1,6 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+
     <title>Scan Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
@@ -11,9 +14,119 @@
             margin: 0;
             padding: 0;
             display: flex;
+            overflow-y: hidden;
             height: 100vh;
-            background-color: #f5f5f5;
+            background-image: url("{% static 'myapp/bg1.png' %}");
         }
+        /* Style for the horizontal scrollable view */
+.scrollable-items {
+    display: flex;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);
+    overflow-x: scroll;
+    padding: 10px 3px;
+    gap: 10px; /* Space between tiles */
+    white-space: nowrap; /* Ensure items stay in one row */
+    width: 100%; /* Full width of the container */
+}
+
+.scrollable-items::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scrollable-items::-webkit-scrollbar-thumb {
+    background-color: #c2c4c2;
+    border-radius: 4px;
+}
+
+.scrollable-items::-webkit-scrollbar-track {
+    background-color: #c2c4c2;
+}
+
+.item-tile {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    background-color: rgba(231, 228, 228, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(255, 255, 255, 0.2) inset;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transform: perspective(500px) rotateX(10deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: bounceDown 0.8s ease-out; /* Apply the bounce-down animation */
+}
+
+/* Hover effect to amplify 3D look */
+.item-tile:hover {
+    transform: perspective(500px) rotateX(0deg) translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(255, 255, 255, 0.3) inset;
+}
+
+/* Keyframes for bounce-down animation */
+@keyframes bounceDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+    }
+    80% {
+        transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+    }
+    100% {
+        transform: translateY(0) scale(1); /* Settle in place */
+    }
+}
+
+@keyframes bounceRight {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px) scale(0.9); /* Start to the left and slightly smaller */
+    }
+    60% {
+        opacity: 1;
+        transform: translateX(20px) scale(1.05); /* Overshoot slightly to the right */
+    }
+    80% {
+        transform: translateX(-10px) scale(0.98); /* Slight bounce back to the left */
+    }
+    100% {
+        transform: translateX(0) scale(1); /* Settle in place */
+    }
+}
+
+/* Style for the item image */
+.item-tile img {
+    width: 80px; /* Small icon size */
+    height: 80px;
+    object-fit: contain; /* Ensure the image fits within the box */
+    border-radius: 4px;
+}
+
+/* Style for the add button */
+.item-tile button {
+    position: absolute;
+    bottom: 10px;
+    background-color: var(--primary-color); /* Transparent button */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.item-tile button:hover {
+    background-color: var(--secondary-color);
+}
+
+
         .container {
             display: flex;
             width: 100%;
@@ -35,7 +148,7 @@
             align-items: center;
         }
         .camera-section button {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             padding: 10px 20px;
@@ -46,20 +159,14 @@
             transition: background-color 0.3s ease;
         }
         .camera-section button:hover {
-            background-color: #0056b3;
+            background-color: var(--secondary-color);
         }
-        #camera-feed {
-             width: 400px;  /* Adjust the width here */
-             height: 200px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
+
         .cart-section {
     display: flex;
     flex-direction: column;
-    height: 300px; /* Set a fixed height */
-    overflow-y: auto; /* Enable vertical scrolling */
+    height: 400px; /* Set a fixed height */
+    /* Enable vertical scrolling */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -78,7 +185,7 @@
             border-bottom: 1px solid #ddd;
         }
         .cart-section button {
-            background-color: #28a745;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             padding: 10px 20px;
@@ -90,13 +197,13 @@
             margin-top: 20px;
         }
         .cart-section button:hover {
-            background-color: #218838;
+            background-color: var(--secondary-color);
         }
         .form-section {
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 250px;
+            width: 300px;
             background: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -115,7 +222,7 @@
             margin-bottom: 10px;
         }
         .form-section button {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             padding: 10px;
@@ -127,13 +234,13 @@
             width: 100%;
         }
         .form-section button:hover {
-            background-color: #0056b3;
+            background-color: var(--secondary-color);
         }
         .checkout-button {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: #17a2b8;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             padding: 15px 30px;
@@ -144,18 +251,19 @@
             transition: background-color 0.3s ease;
         }
         .checkout-button:hover {
-            background-color: #138496;
+            background-color: var(--secondary-color);
         }
-        
+
         .cart-item {
             display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
             gap: 10px; /* Spacing between image, name, and price */
             width: 100%;
             box-sizing: border-box;
+
         }
         .cart-item img {
             width: 50px; /* Size of the item image */
@@ -171,14 +279,41 @@
     cursor: pointer;
     margin-left: 10px;
     padding: 0;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .remove-item:hover {
-    color: darkred;
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background on hover */
+    color: white; /* Change the color of the cross to white */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0; /* Start completely transparent */
+    }
+    to {
+        opacity: 1; /* End fully opaque */
+    }
+}
+
+.atc:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.06);
+}
+
+.fade-in {
+    animation: fadeIn 1s ease forwards; /* Apply the fade-in animation */
 }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <link rel="preload" href="{% static 'js/theme.js' %}" as="script">
+    <script src="{% static 'js/theme.js' %}"></script>
     <script>
+        function addItemToField(uniqueNumber) {
+    const uniqueNumberField = document.getElementById("unique_number1");
+    uniqueNumberField.value = uniqueNumber;
+}
         function startCamera() {
             const html5QrCode = new Html5Qrcode("camera-feed");
 
@@ -186,7 +321,7 @@
                 { facingMode: "environment" }, // or "user" for front camera
                 {
                     fps: 10, // Optional, set the frames per second
-                    qrbox: 250 // Optional, set the QR code scan box size
+                    qrbox: { width: "100%", height: "100%" } // Optional, set the QR code scan box size
                 },
                 qrCodeMessage => {
                     // Handle the scanned QR code message here
@@ -209,12 +344,16 @@
         }
 
         // Start camera on page load
-        window.onload = startCamera;
-        
+
+
          document.addEventListener('DOMContentLoaded', function() {
+             loadTheme1();
+
+    // Start the camera when the document is ready
+    startCamera();
         const removeButtons = document.querySelectorAll('.remove-item');
         const totalElement = document.getElementById('total');
-        
+
         removeButtons.forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault(); // Prevent the default form submission
@@ -226,8 +365,8 @@
                 // Update the total
                 const currentTotal = parseFloat(totalElement.innerText);
                 const newTotal = currentTotal - itemPrice;
-                totalElement.innerText = newTotal.toFixed(2);
-
+                {#totalElement.innerText = newTotal.toFixed(2);#}
+                totalElement.innerText = "Processesing";
                 // Remove the item from the list
                 this.parentElement.remove();
 
@@ -245,46 +384,185 @@
             });
         });
     });
+
+         function showOrderDetails(uniqueNumber) {
+    fetch(`/get_orders/${uniqueNumber}/`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            // Draw the graph using the graph_data from the response
+            drawGraph(data.graph_data);
+            // Display stock left
+            document.getElementById('stock-left').innerText = `Stock Left: ${data.stock}`;
+        })
+        .catch(error => console.error('Error fetching order details:', error));
+}
+let currentChart;
+function drawGraph(graphData) {
+    console.log(graphData)
+    const ctx = document.getElementById('graph').getContext('2d');
+    if (currentChart) {
+            currentChart.destroy();
+        }
+    const labels = Object.keys(graphData);
+    const data = Object.values(graphData);
+
+    // Create the graph
+    currentChart = new Chart(ctx, {
+        type: 'line',  // or 'bar', 'pie', etc.
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Quantity Sold',
+                data: data,
+                borderColor: 'var(--primary-color)',
+                backgroundColor: 'var(--secondary-color)',
+                borderWidth: 1,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const scrollableItems = document.getElementById('scrollableItems');
+
+        searchInput.addEventListener('input', function() {
+            const filter = searchInput.value.toLowerCase();
+            const items = scrollableItems.getElementsByClassName('item-tile');
+
+            Array.from(items).forEach(item => {
+                const itemName = item.getAttribute('data-name');
+                if (itemName.includes(filter)) {
+                    item.style.display = ''; // Show item
+                } else {
+                    item.style.display = 'none'; // Hide item
+                }
+            });
+        });
+    });
+
     </script>
 </head>
 <body>
-<div class="form-section">
-            <h2>Add to Cart</h2>
-            <form id="scan-form" method="post">
-                {% csrf_token %}
-                <input type="text" id="unique_number1" name="unique_number1" placeholder="Enter Unique Number">
-                <button type="submit">Add to Cart</button>
-            </form>
-        </div>
-    <div class="container">
-        <div class="camera-section">
-            <h1>Scan Portal</h1>
-            <div id="camera-feed"></div>
-        </div>
-        <div class="cart-section">
-            <h2>Cart</h2>
-            <ul>
-                {% for item in cart %}
-                    <li class="cart-item">
-                         <img src="{{ item.url }}" alt="{{ item.name }}">
-                        <div class="item-details">
-                            <p>{{ item.name }}</p>
-                            <p>${{ item.price }}</p>
-                        </div>
-                        <button class="remove-item" data-price="{{ item.price }}" data-index="{{ forloop.counter0 }}">
-                            &times;
-                        </button>
-                    </li>
-                {% endfor %}
-            </ul>
-            
-        </div>
-    
-        <div style="padding-left: 30px;">
-    <h3 style="font-family: Roboto, sans-serif;">Total: <span id="total" style=" color: green">${{ total }}</span></h3>
+<div class="sidebar-container">
+        {% include 'myapp/sidebar.html' %} <!-- Include sidebar -->
+    </div>
+<div style="display: flex; flex-direction: column; align-items: center; font-family: 'Roboto', sans-serif; padding: 20px; margin-left: 15%; margin-top:2%;">
+
+<div style="margin-bottom: 30px;">
+    <input type="text" id="searchInput" placeholder="Search items..." style="width: 100%; padding: 8px; border: 1px solid var(--secondary-color); border-radius: 12px; color: var(--primary-color);">
 </div>
+
+<!-- Scrollable Items Section -->
+<div class="scrollable-items" id="scrollableItems" style="display: flex; overflow-y: scroll; gap: 15px; margin-bottom: 20px; width: 700px; white-space: nowrap; height: 120px; min-height: 120px; align-items: center; padding-top: 20px;">
+    {% for item in Items %}
+    <div class="item-tile" style="position: relative; width: 120px; height: 120px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); display: flex; justify-content: center; align-items: center; flex-shrink: 0; flex-direction: column;" data-name="{{ item.name | lower }}">
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 4px;" onclick="showOrderDetails('{{ item.unique_number }}')">
+        {% if item.available %}
+        <button onclick="addItemToField('{{ item.unique_number }}')" style="position: absolute; bottom: 10px; background-color:var(--primary-color); color: #fff; border: none; padding: 5px 10px; font-size: 12px; border-radius: 4px; cursor: pointer; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Add item</button>
+            {% else %}
+              <h1 style=" display: block; font-size: 12px; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+        Out of stock
+    </h1>
+    {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+    <!-- Add to Cart Section -->
+    <div class="form-section" style="text-align: center; margin-bottom: 30px;margin-right: 10px; margin-top:2%; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);">
+        <h1 style="font-size: 28px; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+        Add to Cart
+    </h1>
+        <form id="scan-form" method="post" style="display: inline-block; margin-top: 10px;">
+            {% csrf_token %}
+            <input type="text" id="unique_number1" name="unique_number1" placeholder="Enter Unique Number" style="color:var(--primary-color); padding: 10px; width: 250px; border-radius: 4px; border: 1px solid #ccc; margin-right: 10px;">
+            <button class= 'atc' type="submit" style=" background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; transition: transform ease-in 0.2s;">Add to Cart</button>
+        </form>
     </div>
 
-    <a href="{% url 'checkout' %}" class="checkout-button">Checkout</a>
+    <!-- Camera and Cart Section -->
+    <div class="container" style=" animation: bounceRight 0.8s ease forwards;display: flex; justify-content: space-between; gap: 30px; width: 100%; max-width: 1200px;">
+
+        <!-- Camera Section -->
+        <div class="camera-section" style=" flex: 1; background-color: rgba(255, 255, 255, 0.85); border-radius: 8px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); padding: 20px; transition: box-shadow 0.3s;">
+    <h1 style="font-size: 28px; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+        Scan Portal
+    </h1>
+    <div id="camera-feed" style="background-image: url('{% static 'myapp/bg1.png' %}'); width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; border-radius: 8px; position: relative; overflow: hidden;">
+        <video id="camera-video" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" autoplay></video>
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: var(--primary-color);">
+            Camera Feed Here
+        </div>
+    </div>
+</div>
+
+        <!-- Cart Section -->
+        <div class="cart-section" style="flex: 1; background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);">
+            <h1 style="font-size: 28px; color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">
+        Cart
+    </h1>
+        <div style=" overflow-y: auto; border-color: lightgray">
+         {% if cart|length == 0 %}
+        <!-- Display this when the cart is empty -->
+        <h2 style="text-align: center; color: var(--primary-color); margin-top: 20px; font-family: 'Arial', sans-serif; opacity: 0; animation: fadeIn 1s forwards;">Empty Cart</h2>
+    {% else %}
+            <ul style="list-style-type: none; padding: 0;">
+                {% for item in cart %}
+                <li class="cart-item" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <img src="{{ item.url }}" alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 4px;">
+                    <div class="item-details" style="flex-grow: 1; margin-left: 10px;">
+                        <p style="margin: 0; font-weight: 500;">{{ item.name }}</p>
+                        <p style="margin: 0; color: #555;">${{ item.price }}</p>
+                    </div>
+                    <button class="remove-item" data-price="{{ item.price }}" data-index="{{ forloop.counter0 }}">&times;</button>
+                </li>
+                {% endfor %}
+            </ul>
+         {% endif %}
+        </div>
+
+        </div>
+    </div>
+
+    <!-- Total Section -->
+    <div style="text-align: right; padding: 30px 0; width: 100%; max-width: 1200px;">
+    <h3 class="fade-in" style="font-size: 22px; color: white; font-family: 'Georgia', serif; font-weight: bold; text-shadow: 0 0 10px rgba(180, 180, 180, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);"><span id="total">${{ total }}</span></h3>
+</div>
+
+
+    <!-- Checkout Button -->
+    <a id="ch" href="{% url 'checkout' %}" class="checkout-button" style="padding: 15px 30px; background-color: var(--primary-color); color: #fff; text-decoration: none; border-radius: 5px; font-size: 18px; transition: transform ease-in 0.2s;">Checkout</a>
+{% if error_message %}
+    <div id="error-message" style="color: red; margin-top: 10px;">
+        {{ error_message }}
+    </div>
+    <script>
+        // Automatically hide the error message after 5 seconds (5000 milliseconds)
+        setTimeout(function() {
+            var errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }, 5000);  // 5000 milliseconds = 5 seconds
+    </script>
+    {% endif %}
+</div>
+
 </body>
+<style>
+ #ch:hover{
+     background-color:var(--secondary-color);
+     transform: scale(1.05);
+ }
+</style>
 </html>

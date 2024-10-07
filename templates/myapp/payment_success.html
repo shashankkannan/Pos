@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .receipt {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transform: rotateX(10deg);
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #ddd;
+        }
+
+        .receipt h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .receipt p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .order-details {
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .order-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .order-details th, .order-details td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .order-details th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .ok-button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .ok-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body onload="loadTheme1()">
+
+<div class="receipt">
+    <h2>Payment Successful!</h2>
+    <p>Receipt ID: {{ receipt_id }}</p>
+    <p>Date: {{ time|date:"F j, Y, g:i a" }}</p>
+
+    <!-- Conditional thank you message based on email presence -->
+    <p>
+        {% if email %}
+            Thank you! Your receipt will be sent to you via email at {{ email }}.
+        {% else %}
+            Thank you for your order!
+        {% endif %}
+    </p>
+<p>You can provide your feedback by clicking on the order numbers below, or simply click here: <a href="http://localhost:8000/reviews/">Submit a Review</a>.</p>
+
+    <div class="order-details">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders_data %}
+                <tr>
+                    <td><a href="http://localhost:8000/item_review_order/{{ order.order_id }}"> {{ order.order_id }}</a></td>
+                    <td>{{ order.item_name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>${{ order.price|floatformat:2 }}</td>
+                    <td>${{ order.total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            <tr><td></td><td>Tax</td><td></td><td>${{ tax|floatformat:2 }}</td><td>${{ tax|floatformat:2 }}</td><</tr>
+            <tr><td></td><td>Total</td><td></td><td></td><td>${{ total|floatformat:2 }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button class="ok-button" onclick="redirectToScanPortal()">Okay</button>
+</div>
+
+<script>
+    function redirectToScanPortal() {
+        window.location.href = "{% url 'scan_portal' %}"; // Redirect to the scan portal
+    }
+</script>
+
+</body>
+</html>

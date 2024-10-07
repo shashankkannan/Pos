@@ -1,0 +1,406 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.name }} Information</title>
+
+    <!-- Google Font (Roboto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("{% static 'myapp/bg1.png' %}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            animation: bounceDown 0.8s ease-out;
+            max-width: 70%;
+            margin: 40px auto;
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Enhanced shadow for depth */
+            position: relative;
+        }
+        @keyframes bounceDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9); /* Start above and slightly smaller */
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(20px) scale(1.05); /* Overshoot slightly */
+    }
+    80% {
+        transform: translateY(-10px) scale(0.98); /* Slight bounce back up */
+    }
+    100% {
+        transform: translateY(0) scale(1); /* Settle in place */
+    }
+}
+
+        .item-details {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .item-details img {
+            width: 250px;
+            height: auto;
+            border-radius: 8px;
+            margin-right: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 3D effect for image */
+        }
+
+        .item-info {
+            flex-grow: 1;
+        }
+
+        .item-info h2 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* 3D text shadow effect */
+        }
+
+        .item-info p {
+            font-size: 1.2em;
+            margin: 5px 0;
+            font-weight: 500;
+        }
+
+        /* Tickets Section - Top Right */
+        .tickets-section {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* 3D effect */
+        }
+
+        .tickets-section h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-box {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f7f7f7;
+        }
+
+        .ticket {
+            background-color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+        }
+
+        .ticket .ticket-id {
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .ticket .status {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        /* Scrollbar Styling */
+        .ticket-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .ticket-box::-webkit-scrollbar-thumb {
+            background-color: #007bff;
+            border-radius: 10px;
+        }
+
+        /* Review Section */
+        .review-section {
+            margin-top: 40px;
+        }
+
+        .review-section h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-box {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f7f7f7;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* 3D effect for review box */
+        }
+
+        .review {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Subtle 3D effect for reviews */
+        }
+
+        .review .email {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .review .created-at {
+            font-size: 0.9em;
+            color: gray;
+        }
+
+        .review .review-text {
+            margin: 10px 0;
+        }
+
+        .review .order-info {
+            font-size: 0.9em;
+            color: #888;
+        }
+        .assign-btn, #restockButton, #itemanalytics  {
+        background-color: var(--primary-color); /* Blue color */
+        color: #fff; /* White text */
+        border: none; /* No border */
+        padding: 10px 15px; /* Padding for size */
+        font-size: 0.9em; /* Font size */
+        border-radius: 5px; /* Slightly rounded corners */
+        cursor: pointer; /* Pointer cursor */
+        transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle box shadow for depth */
+    }
+
+    /* Hover effect for buttons */
+    .assign-btn:hover , #restockButton:hover, #itemanalytics:hover{
+        background-color: var(--secondary-color); /* Darker blue on hover */
+        transform: scale(1.05); /* Slightly increase size */
+    }
+
+    /* Active (clicked) button state */
+    .assign-btn:active , #restockButton:active, #itemanalytics:active{
+        background-color: var(--primary-color); /* Even darker blue when clicked */
+        transform: scale(0.98); /* Slightly shrink when clicked */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Reduced shadow on click */
+    }
+    .assign-btn:focus {
+        outline: none; /* Remove default outline */
+        box-shadow: 0 0 5px #007bff; /* Custom focus outline */
+    }
+
+
+    </style>
+</head>
+<script>
+   function restockItem() {
+    // Step 1: Confirm with the user about throwing out the current stock
+    const itemId = {{ item.id }};  // Pass the item ID dynamically from Django
+    const currentStock = {{ item.stock }};  // Get the current stock value
+
+    // Prompt the user with a message about the current stock
+   let isThrowingOut = null;
+       {% if not item.stock == 0 %}
+     isThrowingOut = confirm(`Are you discarding the current stock? Note: The current stock is ${currentStock}. \nClick 'OK' to discard or 'Cancel' to just update the current stock.`);
+       {% endif %}
+    // Step 2: Ask the user how much quantity they want to restock
+    const restockQuantity = prompt(`Your current stock is ${currentStock}. \nHow much quantity do you want to restock?`);
+
+    if (restockQuantity !== null) {
+        const quantity = parseInt(restockQuantity);
+
+        // Validate that the user entered a positive integer for quantity
+        if (!isNaN(quantity) && quantity > 0) {
+            // Send the AJAX request to the backend for restocking the item
+            fetch(`/restock_item/`, {  // Ensure this URL matches your Django URL pattern
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token for security
+                },
+                body: JSON.stringify({ id: itemId, quantity: quantity, isThrowingOut: isThrowingOut })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) { // Show success message
+                    console.log(data.message)
+                    window.location.reload();  // Reload the page after restocking
+                } else {
+                    alert('Failed to restock the item: ' + data.error);  // Show error message
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            alert('Please enter a valid quantity greater than 0.');  // Alert for invalid quantity
+        }
+    }
+}
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Attach event listeners to all assign buttons
+        document.querySelectorAll('.assign-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const ticketId = this.getAttribute('data-ticket-id');
+
+                // Send the request to assign the ticket
+                fetch(`/assign_ticket/${ticketId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is sent for security
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Ticket assigned successfully!');
+                        window.location.reload();
+                        // You may want to refresh the page or update the UI dynamically here
+                    } else {
+                        alert('Failed to assign ticket.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+     function analytics(itemId) {
+            // Construct the URL based on the item ID
+            const ul = `/item/${itemId}/analytics/`; // Ensure this matches your URL pattern
+
+            // Redirect to the analytics page
+            window.location.href = ul;
+        }
+</script>
+
+<body onload="loadTheme1()">
+{% if tickets != 2 %}
+   <div style="display: flex; flex-direction: column; align-items: flex-end; margin-top: 20px;">
+    <button id="restockButton" style="margin-bottom: 10px;" onclick="restockItem()">Restock</button>
+    <button id="itemanalytics" onclick="analytics({{ item.id }})">Analytics</button>
+</div>
+    {% endif %}
+{% if tickets != 2 %}
+<div class="sidebar-container">
+        {% include 'myapp/sidebar.html' with show_view_items=typenm typeid=typeid %} <!-- Pass the value to sidebar -->
+    </div>
+{% else %}
+    {% include 'myapp/sidebar.html' with webc='1' %}
+{% endif %}
+<div class="container">
+
+    <!-- Item Details -->
+    <div class="item-details">
+        <img src="{{ item.image.url }}" alt="{{ item.name }}">
+        <div class="item-info">
+            <h2 style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">{{ item.name }}</h2>
+            <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Price: ${{ item.price }}</p>
+        {% if item.stock == 0 %}
+            <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Stock: Out of stock</p>
+        {% else %}
+            <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Stock: {{ item.stock }}</p>
+        {% endif %}
+            <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Item ID: {{ item.unique_number }}</p>
+                                             <p style="color: gold; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="review-stars">
+                        <!-- Loop to display filled stars -->
+                                             {% with item.review_stars|rounded_stars as rounded_stars %}
+                        {% for _ in rounded_stars|filled_stars %}
+                            &#9733; <!-- Filled star -->
+                        {% endfor %}
+                        <!-- Loop to display empty stars -->
+                        {% for _ in rounded_stars|empty_stars %}
+                             <!-- Empty star -->
+                        {% endfor %}
+                                             {% endwith %}
+                    </p>
+        </div>
+
+    {% if tickets != 2 %}
+        <!-- Tickets Section (Top Right) -->
+        <div class="tickets-section">
+            <h3 style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Tickets</h3>
+            <div class="ticket-box">
+                {% if tickets %}
+                    {% for ticket in tickets %}
+    <div class="ticket">
+        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="ticket-id">Ticket: #{{ ticket.ticket_id|slice:"-7:" }}</span><br>
+        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);"class="status">Assigned: {{ ticket.assigned|yesno:"Yes,No" }}</span><br>
+        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="status">Done: {{ ticket.done|yesno:"Yes,No" }}</span><br>
+        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="status">Order ID: {{ ticket.order.order_id }}</span><br>
+
+        <!-- Conditionally show the Assign button if ticket is not assigned -->
+        {% if not ticket.assigned %}
+            <button type="button" class="assign-btn" data-ticket-id="{{ ticket.ticket_id }}">
+                Assign
+            </button>
+        {% endif %}
+    </div>
+{% endfor %}
+                {% else %}
+                    <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">No tickets for this item.</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    </div>
+
+
+    <!-- Review Section -->
+    <div class="review-section">
+        <h3 style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">Customer Reviews</h3>
+        <div class="review-box">
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="review">
+                        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="email">{{ review.order.email_id }}</span>
+                        <span style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="created-at">{{ review.created_at|date:"F j, Y, g:i a" }}</span>
+                        <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="review-text">{{ review.review_text }}</p>
+                                             <p style="color: gold; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="review-stars">
+                        <!-- Loop to display filled stars -->
+                        {% for _ in review.stars|filled_stars %}
+                            &#9733; <!-- Filled star -->
+                        {% endfor %}
+                        <!-- Loop to display empty stars -->
+                        {% for _ in review.stars|empty_stars %}
+                             <!-- Empty star -->
+                        {% endfor %}
+                    </p>
+
+                        <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" class="order-info">Order ID: {{ review.order.order_id }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--primary-color); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);">No reviews yet for this item.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

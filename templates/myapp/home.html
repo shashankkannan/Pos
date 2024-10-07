@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'myapp/bg1.png' %}");
+            color: #fff;  /* White text for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            position: relative;  /* To position the dropdown at the top-right */
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            color: #fff;
+            font-size: 3em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px 50px;
+            margin: 15px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 24px;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            animation: bounce 1s infinite;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            perspective: 1000px; /* For 3D effect */
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-5px) rotateY(10deg);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .button:active {
+            transform: translateY(2px) rotateY(0deg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Dropdown styling */
+        .theme-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #theme-select {
+            background-color: #800000; /* Default for Gryffindor */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        #theme-select:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        #theme-select:focus {
+            outline: none;
+        }
+
+        /* Change colors based on selection */
+        #theme-select option[value="gryffindor"] {
+            background-color: #800000; /* Gryffindor color */
+            color: white;
+        }
+
+        #theme-select option[value="hufflepuff"] {
+            background-color: #4B0082; /* Hufflepuff color */
+            color: white;
+        }
+
+        label {
+            color: black;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeSelect = document.getElementById('theme-select');
+        const bodyElement = document.body;
+        if (themeSelect) {
+            themeSelect.addEventListener('change', function() {
+                changeTheme(this.value); // Call changeTheme with the selected value
+                 if (this.value === 'gryffindor') {
+                this.style.backgroundColor = '#800000'; // Gryffindor color
+                bodyElement.style.backgroundImage = "url('/static/myapp/bg1.png')"; // Use the appropriate static URL for the image
+            } else if (this.value === 'hufflepuff') {
+                this.style.backgroundColor = '#4B0082'; // Hufflepuff color
+                bodyElement.style.backgroundImage = "url('/static/myapp/bg1.jpg')"; // Use the appropriate static URL for the image
+            }
+            });
+            // Load the current theme on page load
+            loadTheme(); // This will load the saved theme
+        }
+    });
+</script>
+
+<body onload="loadTheme1()">
+    <!-- Theme Selector at Top Right -->
+    <div class="theme-selector">
+        <label for="theme-select" style="color: #fff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold;">Choose Theme:</label>
+        <select id="theme-select">
+            <option value="gryffindor">Gryffindor</option>
+            <option value="hufflepuff">Hufflepuff</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <h1 style="text-shadow: 0 0 10px rgba(180, 180, 180, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5); color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px;">Welcome to the Portal</h1>
+        <a style=" color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" href="{% url 'admin_portal' %}" class="button">Admin</a>
+        <a style="color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" href="{% url 'worker_login' %}" class="button">Employee</a>
+        <a style="color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);" href="{% url 'webecom' %}" class="button">Customer</a>
+    </div>
+</body>
+</html>

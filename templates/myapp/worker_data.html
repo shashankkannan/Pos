@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Items</title>
+</head>
+
+<style>
+    @keyframes bounceDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(15px) scale(1.05);
+            }
+            80% {
+                transform: translateY(-5px) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+        p, h2, h1,h3, td{
+            color: var(--primary-color);
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        /* General body styles */
+
+    /* General body styles */
+    body {
+        overflow-y: hidden;
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        background-image: url("{% static 'myapp/bg1.png' %}");
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        border-radius: 15px;
+        width: 100%;
+        text-align: center;
+        animation: bounceDown 0.8s ease-out;
+        max-width: 600px;
+        margin-top: 2%;
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.45);
+        margin-top: 4vh;
+    }
+
+    th, td {
+        padding: 8px 16px;
+        text-align: left;
+        border: 1px solid #333;
+        white-space: nowrap;
+    }
+
+    th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: bold;
+    }
+
+    td {
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+        background-color: #f9f9f9;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Dark background */
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 3D effect */
+        width: 50%;
+    }
+
+    .close-btn {
+        float: right;
+        font-size: 20px;
+        cursor: pointer;
+        color: red;
+    }
+
+    h2 {
+        color: var(--primary-color);
+        text-align: center;
+        font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+        font-weight: bold;
+    }
+
+    .modal-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .modal-table th, .modal-table td {
+        padding: 8px;
+        text-align: left;
+        border: 1px solid #ccc;
+    }
+
+    .modal-table th {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .analytics-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+    .analytics-btn:hover {
+        background-color: #003366;
+        transform: scale(1.05);
+    }
+
+
+</style>
+<body onload="loadTheme1()">
+<div class="sidebar-container">
+        {% include 'myapp/sidebar.html' %} <!-- Include sidebar -->
+    </div>
+ <div class="container">
+        <h1>Workers</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>Worker name</th>
+                <th>Worker ID</th>
+                <th>Worker username</th>
+                 <th>Analytics</th>
+            </tr>
+            </thead>
+            {% for worker in workers %}
+            <tr>
+                <td>{{ worker.name }}</td>
+                <td>{{ worker.worker_id }}</td>
+                <td>{{ worker.username }}</td>
+              <td>
+                <button class="analytics-btn" onclick="showModal('{{ worker.worker_id }}')">Analytics</button>
+            </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+<div id="analyticsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Worker Analytics</h2>
+        <h3 id="completionPercentage"></h3> <!-- Work percentage will be dynamically inserted here -->
+        <table class="modal-table">
+            <thead>
+            <tr>
+                <th>Ticket ID</th>
+                <th>Created At</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="ticketTableBody">
+            <!-- Ticket data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    // Function to show the modal
+    function showModal(worker_id) {
+        // Use AJAX to fetch ticket data for the worker
+        fetch(`/worker_analytics/${worker_id}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const ticketTableBody = document.getElementById("ticketTableBody");
+                const completionPercentage = document.getElementById("completionPercentage");
+
+                // Clear the table body for fresh data
+                ticketTableBody.innerHTML = "";
+
+                // Calculate work completion percentage
+                const totalTickets = data.tickets.length;
+                const completedTickets = data.tickets.filter(ticket => ticket.done).length;
+                const percentageCompleted = totalTickets ? ((completedTickets / totalTickets) * 100).toFixed(2) : 0;
+
+                // Insert completion percentage
+                completionPercentage.textContent = `${percentageCompleted}% work completed (${completedTickets} of ${totalTickets} tickets done)`;
+
+                // Populate the table with ticket data
+                data.tickets.forEach(ticket => {
+                    const row = document.createElement("tr");
+
+    // Create columns for ticket data
+    const ticketIdCell = document.createElement("td");
+    const ticketLink = document.createElement("a"); // Create an anchor element
+
+    // Construct the URL for the ticket details page
+    ticketLink.href = `/ticket_details/${ticket.ticket_id}/`; // Use the ticket_id
+    ticketLink.textContent = ticket.ticket_id; // Display the ticket ID
+
+    // Append the link to the ticketIdCell
+    ticketIdCell.appendChild(ticketLink);
+
+                    const createdAtCell = document.createElement("td");
+                    createdAtCell.textContent = new Date(ticket.created_at).toLocaleDateString();
+
+                    const statusCell = document.createElement("td");
+                    statusCell.textContent = ticket.done ? '✔️' : '❌';
+
+                    // Append cells to the row
+                    row.appendChild(ticketIdCell);
+                    row.appendChild(createdAtCell);
+                    row.appendChild(statusCell);
+
+                    // Append row to the table body
+                    ticketTableBody.appendChild(row);
+                });
+
+                // Show the modal
+                document.getElementById("analyticsModal").style.display = "block";
+            })
+            .catch(error => {
+                console.error('Error fetching ticket data:', error);
+                // Optionally display an error message to the user
+                alert('Failed to fetch ticket data. Please try again later.');
+            });
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById("analyticsModal").style.display = "none";
+    }
+</script>
+
+</body>
+
+</html>

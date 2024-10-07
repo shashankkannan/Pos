@@ -1,6 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}">
+    <script src="{% static 'js/theme.js' %}" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
@@ -9,23 +12,41 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-image: url("{% static 'myapp/bg1.png' %}");
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .cart-container {
+            animation: bounceDown 0.8s ease-out;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             padding: 20px;
             gap: 20px;
         }
+        @keyframes bounceDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.9);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(20px) scale(1.05);
+    }
+    80% {
+        transform: translateY(-10px) scale(0.98);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
         .cart-item {
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);
             background: #fff;
             padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 200px;
             text-align: center;
         }
@@ -43,7 +64,7 @@
             background: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);
             text-align: center;
             margin-top: 20px;
         }
@@ -52,7 +73,7 @@
             font-size: 18px;
         }
         .pay-button {
-            background-color: #28a745;
+            background-color: var(--primary-color) ;
             color: #fff;
             border: none;
             padding: 15px 30px;
@@ -63,7 +84,8 @@
             transition: background-color 0.3s ease;
         }
         .pay-button:hover {
-            background-color: #218838;
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
         }
         /* Payment Modal */
         .modal {
@@ -94,17 +116,18 @@
             border-radius: 4px;
         }
         .modal-content button {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: #fff;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transforem ease-in 0.2s;
         }
         .modal-content button:hover {
-            background-color: #0056b3;
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
         }
         .close-modal {
             background-color: #dc3545;
@@ -113,10 +136,24 @@
         .close-modal:hover {
             background-color: #c82333;
         }
+        p{
+            color: var(--primary-color);
+            font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        #tr:hover{
+            color: indianred;
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
-<body>
-    <h1>Checkout</h1>
+<body onload="loadTheme1()">
+    <h1 style="font-size: 28px; color: white; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 10px 8px 15px rgba(140, 140, 140, 0.45), 5px 5px 10px rgba(0, 0, 0, 0.5);">
+        Checkout
+    </h1>
     <div class="cart-container">
         {% for item in cart %}
             <div class="cart-item">
@@ -128,22 +165,25 @@
     </div>
 
     <div class="total-section">
-        <p>Tax: ${{ tax }}</p>
+        <p>Tax: ${{ tax|floatformat:2 }}</p>
         <p>Total: ${{ total|floatformat:2 }}</p>
-        <button class="pay-button" onclick="showPaymentModal()">Pay</button>
+        <button id="py" style="transition: transform ease-in 0.2s, color ease-in 0.2s; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;" class="pay-button" onclick="showPaymentModal()">Pay</button>
+        <a id="tr" href="{% url 'scan_portal' %}" class="btn btn-primary" style="color:red; display: block; margin-top: 10px; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; transition: transform ease-in 0.2s, color ease-in 0.2s;">Cancel Transaction</a>
     </div>
 
     <!-- Payment Modal -->
     <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <h2>Enter Payment Details</h2>
-            <input type="text" placeholder="Card Number" maxlength="16">
-            <input type="text" placeholder="MM/YY" maxlength="5">
-            <input type="text" placeholder="CCV" maxlength="3">
-            <button onclick="confirmPayment()">Pay</button>
-            <button class="close-modal" onclick="closePaymentModal()">Cancel</button>
-        </div>
+    <div class="modal-content">
+        <h2>Enter Payment Details</h2>
+        <input type="text" placeholder="Card Number" maxlength="16" required>
+        <input type="text" placeholder="MM/YY" maxlength="5" required>
+        <input type="text" placeholder="CCV" maxlength="3" required>
+        <input type="email"  name="email" placeholder="Email ID (optional)" maxlength="100"> <!-- Corrected Email ID field -->
+        <button onclick="confirmPayment()" style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;">Pay</button>
+        <button class="close-modal" style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;" onclick="closePaymentModal()">Cancel</button>
+
     </div>
+</div>
 
     <script>
         function showPaymentModal() {
@@ -154,10 +194,64 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
+        {#function confirmPayment() {#}
+        {#    alert('Payment successful!');#}
+        {#    window.location.href = '{% url "scan_portal" %}';#}
+
         function confirmPayment() {
-            alert('Payment successful!');
-            window.location.href = '{% url "scan_portal" %}';
-        }
+    // Create a form element
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{% url 'confirm_payment' %}";  // Django view handling the payment
+
+    // CSRF token for security
+    var csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+
+    // Include cart data as hidden fields
+    {% for item in cart %}
+        var itemId = document.createElement('input');
+        itemId.type = 'hidden';
+        itemId.name = 'cart_items';
+        itemId.value = '{{ item.unique_number }}';  // Assuming you have an item id or unique identifier
+        form.appendChild(itemId);
+
+        var itemQuantity = document.createElement('input');
+        itemQuantity.type = 'hidden';
+        itemQuantity.name = 'cart_quantities';
+        itemQuantity.value = '{{ item.quantity }}';  // Assuming there's a quantity field
+        form.appendChild(itemQuantity);
+    {% endfor %}
+
+        const emailField = document.querySelector('input[name="email"]');
+    if (emailField && emailField.value) {
+        var emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = emailField.value;  // Set the email value
+        form.appendChild(emailInput);
+    }
+    // Include tax and total as hidden fields
+    var taxInput = document.createElement('input');
+    taxInput.type = 'hidden';
+    taxInput.name = 'tax';
+    taxInput.value = '{{ tax }}';  // Assuming tax is available in context
+    form.appendChild(taxInput);
+
+    var totalInput = document.createElement('input');
+    totalInput.type = 'hidden';
+    totalInput.name = 'total';
+    totalInput.value = '{{ total }}';  // Assuming total is available in context
+    form.appendChild(totalInput);
+
+    // Append the form to the document and submit it
+    document.body.appendChild(form);
+    form.submit();
+}
+
     </script>
 </body>
 </html>
