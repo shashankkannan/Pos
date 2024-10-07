@@ -1,4 +1,5 @@
 # POS System - Python Django Web Application
+**Upgrade**: Integrated POS and E-commerce Solution with AI-Powered Analysis - Project upgrade
 
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Django](https://img.shields.io/badge/Django-3.x-brightgreen.svg)](https://www.djangoproject.com/)
@@ -8,14 +9,13 @@
 This project is a Point of Sale (POS) system developed using Django, a powerful Python web framework. The system allows users to scan items, add them to a shopping cart, and proceed to checkout. It includes essential features such as calculating taxes, managing cart items, and processing payments.
 
 ## Features
-
-- **Scan Portal:** Easily add items to the cart by scanning barcodes.
-- **Cart Management:** View items in the cart, along with their prices and images.
-- **Tax Calculation:** Automatically calculates a 10% tax on the total cart value.
-- **Checkout Process:** View cart items on the checkout page, with an option to finalize the purchase.
-- **Payment Gateway Simulation:** A pop-up box simulates a payment process, asking for card details.
-- **Session Management:** Cart items are stored in session, allowing for persistence during the shopping process.
-- **Cart Clearance:** Automatically clears the cart once the checkout process is completed.
+- **POS Scanning Portal**: Supports item scanning, cart management, payment processing, and automatically generates orders and receipts.
+- **E-commerce Store**: Customers can browse, search, add items to cart, and place orders online, with automatic order and receipt generation.
+- **Stock Management**: Tracks stock levels, predicts restock timing, and flags expiring items for quick action.
+- **Customer Analysis**: Identifies purchase patterns, provides insights on customer behavior, and predicts future visits.
+- **AI Review System**: Allows customers to leave reviews using text or voice input, performs sentiment analysis, assigns star ratings, and generates automated replies. It flags problematic reviews for ticket creation, which are then assigned to workers.
+- **Worker Portal**: Workers manage assigned tickets with login options using face recognition or username/password. Performance analytics help admins assess employee productivity and assign tasks effectively.
+- **Predictive Analytics**: Provides key insights on item performance, stock wastage, and customer engagement for better decision-making.
 
 ## Project Structure
 
